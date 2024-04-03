@@ -1,6 +1,7 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gerenciador_terefas/model/tarefa.dart';
+import 'package:gerenciador_tareas/model/tarefa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FiltroPage extends StatefulWidget{
@@ -27,11 +28,25 @@ class _FiltroPageState extends State<FiltroPage>{
   bool _usarOrdemDecrescente = false;
   bool _alterouValores = false;
 
+  @override
+  void initState(){
+    super.initState();
+    _carregarSharedPreferences();
+  }
+
+  void _carregarSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _campoOrdenacao = prefs.getString(FiltroPage.CHAVE_CAMPO_ORDENACAO) ?? Tarefa.campo_id;
+      _usarOrdemDecrescente = prefs.getBool(FiltroPage.CHAVE_ORDENAR_DECRESCENTE) ?? false;
+      _descricaoController.text = prefs.getString(FiltroPage.CHAVE_FILTRO_DESCRICAO) ?? '';
+    });
+  }
 
   @override
   Widget build(BuildContext context){
     return WillPopScope(
-        onWillPop: null,
+        onWillPop: _onVoltarClick,
         child: Scaffold(
           appBar: AppBar(
             centerTitle: false,
@@ -61,32 +76,52 @@ class _FiltroPageState extends State<FiltroPage>{
               Text(camposParaOrdenacao[campo] ?? ''),
             ],
           ),
-        Divider(),
+        const Divider(),
         Row(
           children: [
             Checkbox(
                 value: _usarOrdemDecrescente,
-                onChanged: null,
+                onChanged: _onUsarOrdemDecrescenteChange,
             ),
-            Text('Usar ordem descrescente')
+            const Text('Usar ordem descrescente')
           ],
         ),
-         Divider(),
-         const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+         const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
           child: TextField(
-            decoration: InputDecoration(labelText: 'A descriçao começa com:'),
+            decoration: const InputDecoration(labelText: 'A descriçao começa com:'),
+            controller: _descricaoController,
+            onChanged: _onFiltroDescricaoChange,
           ),
-
         ),
       ],
     );
   }
+
+  Future<bool> _onVoltarClick() async{
+    Navigator.of(context).pop(_alterouValores);
+    return true;
+  }
+
+  void _onFiltroDescricaoChange(String? valor){
+    prefs.setString(FiltroPage.CHAVE_FILTRO_DESCRICAO, valor ?? '');
+    _alterouValores = true;
+  }
+
   void _onCampoOrdenacaoChanged(String? valor){
     prefs.setString(FiltroPage.CHAVE_CAMPO_ORDENACAO, valor ?? '');
     _alterouValores = true;
     setState(() {
       _campoOrdenacao = valor ?? '';
+    });
+  }
+
+  void _onUsarOrdemDecrescenteChange(bool? valor){
+    prefs.setBool(FiltroPage.CHAVE_ORDENAR_DECRESCENTE, valor == true);
+    _alterouValores = true;
+    setState(() {
+      _usarOrdemDecrescente = valor == true;
     });
   }
 
