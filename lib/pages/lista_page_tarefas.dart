@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:gerenciador_tareas/model/tarefa.dart';
-import 'package:gerenciador_tareas/pages/filtro_page.dart';
-import 'package:gerenciador_tareas/widgets/conteudo_form_dialog.dart';
+import 'package:gerenciador_terefas/model/tarefa.dart';
+import 'package:gerenciador_terefas/pages/filtro_page.dart';
+import 'package:gerenciador_terefas/widgets/conteudo_form_dialog.dart';
 
 class ListaTarefaPage extends StatefulWidget{
 

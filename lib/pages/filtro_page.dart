@@ -1,7 +1,6 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gerenciador_tareas/model/tarefa.dart';
+import 'package:gerenciador_terefas/model/tarefa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FiltroPage extends StatefulWidget{
